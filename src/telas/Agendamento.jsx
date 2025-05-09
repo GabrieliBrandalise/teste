@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import AgendamentoContext from './context/AgendamentoContext';
 import {
     getAgendamentosAPI, deleteAgendamentoAPI, adicionarAgendamentoAPI, atualizarAgendamentoAPI
-} from '../services/AgendamentoServico'; // Aqui você vai ter que criar os serviços de agendamento no mesmo estilo que o de pedidos.
+} from '../services/AgendamentoServico'; 
 import { Button, Table, Modal, Form } from 'react-bootstrap';
 
 function Agendamento() {
@@ -54,7 +54,7 @@ function Agendamento() {
         e.preventDefault();
 
         if (isEditing) {
-            await atualizarAgendamento(agendamentoAtual);  // Passa o objeto completo
+            await atualizarAgendamento(agendamentoAtual);
         } else {
             await criarAgendamento(agendamentoAtual);
         }
