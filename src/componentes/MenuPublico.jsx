@@ -9,15 +9,11 @@ function MenuPublico() {
         <>
             <Navbar expand="lg" className="bg-body-tertiary">
                 <Container>
-                    <NavLink className="navbar-brand" exact="true"
-                        to="/">eShop</NavLink>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <NavLink className="nav-link active" exact="true"
                                 to="/">Home</NavLink>
-                            <NavLink className="nav-link active" exact="true"
-                                to="/sobre">Sobre...</NavLink>
                         </Nav>
                     </Navbar.Collapse>
                     <Navbar.Collapse className="justify-content-end">
