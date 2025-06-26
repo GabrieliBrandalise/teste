@@ -13,35 +13,17 @@ function MenuPrivado() {
         <>
             <Navbar expand="lg" className="bg-body-tertiary">
                 <Container>
-                    <NavLink className="navbar-brand" exact="true"
-                        to="/privado">eShop</NavLink>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <NavLink className="nav-link active" exact="true"
-                                to="/privado">Home</NavLink>
-                            {usuario &&
-                                <NavDropdown title="Manutenções" id="basic-nav-dropdown">
-                                    <NavLink className="dropdown-item" exact="true"
-                                        to="categorias">Categorias</NavLink>
-                                    <NavLink className="dropdown-item" exact="true"
-                                        to="produtos">Produtos</NavLink>
-                                </NavDropdown>
-                            }
-                            <NavLink className="nav-link active" exact="true"
-                                to="sobre">Sobre...</NavLink>
+                            <NavLink className="nav-link active" aria-current="page" exact="true" to="/">CAB</NavLink>
+                            <NavDropdown title="Opções" id="basic-nav-dropdown">
+                                <NavLink className="dropdown-item" exact="true" to="pedido">Pedidos</NavLink>
+                                <NavLink className="dropdown-item" exact="true" to="cliente">Clientes</NavLink>
+                                <NavLink className="dropdown-item" exact="true" to="produto">Produtos</NavLink>
+                            </NavDropdown>
+                            <NavLink className="nav-link active" aria-current="page" exact="true" to="agendamento">Agendamentos</NavLink>
                         </Nav>
-                    </Navbar.Collapse>
-                    <Navbar.Collapse className="justify-content-end">                        
-                        <NavDropdown title={usuario ? "Usuário: " + usuario.nome : "Usuário"} id="basic-nav-dropdown">
-                            {usuario ?
-                                <NavLink className="dropdown-item" exact="true"
-                                    to="/" onClick={() => logout()}>Logout</NavLink>
-                                :
-                                <NavLink className="dropdown-item" exact="true"
-                                    to="/login">login</NavLink>
-                            }
-                        </NavDropdown>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

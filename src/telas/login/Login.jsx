@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { gravaAutenticacao, getToken } from '../../seguranca/Autenticacao';
 import Carregando from '../../commons/Carregando';
 import Alerta from '../../commons/Alerta';
 import CampoEntrada from '../../commons/CampoEntrada';
+import {atualizarUsuarioAPI} from '../../services/UsuarioServico'
+import Button from 'react-bootstrap/Button';
 
 function Login() {
 
@@ -12,6 +14,40 @@ function Login() {
     const [alerta, setAlerta] = useState({ status: "", message: "" });
     const [autenticado, setAutenticado] = useState(false);
     const [carregando, setCarregando] = useState(false);
+     const [usuarioLogado, setUsuarioLogado] = useState({
+    nome: "", email: "", telefone: "", senha: "", tipo: ""
+    });
+    const [isEditing, setIsEditing] = useState(false);
+
+    const navigate = useNavigate();
+    const atualizarUsuario = async (usuario) => {
+            try{
+            const retornoAPI = await atualizarUsuarioAPI(usuario);
+            setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
+            }catch(eer){
+                console.error(err.message);
+                setAlerta({ status: "error", message: err.message })
+            }
+    };
+
+     const openModal = (usuario = {
+    nome: "", email: "", telefone: "", senha: "", tipo: ""
+  }) => {
+    setUsuarioLogado(usuario);
+    setIsEditing(true);
+    setEmail(usuario.email || "");
+    setSenha(usuario.senha || "");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (isEditing) {
+      await atualizarUsuario(usuarioLogado);
+    } else {
+      await acaoLogin();
+    }
+  };
 
     const acaoLogin = async e => {
 
@@ -66,22 +102,43 @@ function Login() {
                 <div className="col-12 col-md-6">
                     <Carregando carregando={carregando}>
                         <Alerta alerta={alerta} />
-                        <form onSubmit={acaoLogin}>
+                        <form onSubmit={handleSubmit}>
                             <h1 className="h3 mb-3 fw-normal">Login de usuário</h1>
                             <CampoEntrada value={email}
                                 id="txtEmail" name="email" label="Nome"
-                                tipo="email" onchange={e => setEmail(e.target.value)}
+                                tipo="email" onchange={e => {
+                                    setUsuarioLogado({ ...usuarioLogado, email: e.target.value });
+                                    setEmail(e.target.value);
+                                 }
+                                }
                                 msgvalido="Email OK" msginvalido="Informe o email"
                                 requerido={true} readonly={false}
                                 maxCaracteres={40} />
                             <CampoEntrada value={senha}
                                 id="txtSenha" name="senha" label="Senha"
-                                tipo="password" onchange={e => setSenha(e.target.value)}
+                                tipo="password" onChange={(e) => {
+                                    setUsuarioLogado({ ...usuarioLogado, senha: e.target.value });
+                                    setSenha(e.target.value);
+                                    }}
                                 msgvalido="Senha OK" msginvalido="Informe a senha"
                                 requerido={true} readonly={false}
                                 maxCaracteres={40} />
-                            <button className="w-100 btn btn-lg btn-primary" type="submit">Efetuar login</button>
+                             <Button variant="primary" type="submit">
+                                {isEditing ? 'Atualizar Usuário' : 'Login'}
+                            </Button>
                         </form>
+
+                         <div className="mt-4 d-flex flex-column gap-2">
+                        <Button variant="success" onClick={() => navigate("/createaccount")}>
+                            Criar Usuário
+                        </Button>
+                        <Button variant="info" onClick={acaoLogin}>
+                            Login
+                        </Button>
+                        <Button variant="secondary" onClick={() => openModal(usuarioLogado)}>
+                            Editar
+                        </Button>
+                        </div>
                     </Carregando>
                 </div>
             </div>

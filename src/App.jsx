@@ -9,9 +9,9 @@ import Produto from './telas/Produto'
 import Cliente from './telas/Cliente'
 import Agendamento from './telas/Agendamento'
 import Login from './telas/login/Login'
-import Logon from './telas/login/Logon'
 import MenuPublico from './componentes/MenuPublico'
 import MenuPrivado from "./componentes/MenuPrivado";
+import CreateAccount from "./telas/login/CreateAccount";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -53,8 +53,8 @@ const router = createBrowserRouter([
         element: <Produto />,
       },
       {
-        path : "logon",
-        element :  <Logon/>
+        path : "createaccount",
+        element :  <CreateAccount />
       }  
     ]
   }
