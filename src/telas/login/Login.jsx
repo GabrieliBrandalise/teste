@@ -116,19 +116,16 @@ function Login() {
                                 maxCaracteres={40} />
                             <CampoEntrada value={senha}
                                 id="txtSenha" name="senha" label="Senha"
-                                tipo="password" onChange={(e) => {
+                                tipo="password" onchange={(e) => {
                                     setUsuarioLogado({ ...usuarioLogado, senha: e.target.value });
                                     setSenha(e.target.value);
                                     }}
                                 msgvalido="Senha OK" msginvalido="Informe a senha"
                                 requerido={true} readonly={false}
                                 maxCaracteres={40} />
-                             <Button variant="primary" type="submit">
-                                {isEditing ? 'Atualizar Usuário' : 'Login'}
-                            </Button>
                         </form>
 
-                         <div className="mt-4 d-flex flex-column gap-2">
+                         <div className="mt-4 d-flex flex-row gap-2 justify-content-center">
                         <Button variant="success" onClick={() => navigate("/createaccount")}>
                             Criar Usuário
                         </Button>
