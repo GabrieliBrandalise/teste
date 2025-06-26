@@ -24,7 +24,7 @@ function Login() {
             try{
             const retornoAPI = await atualizarUsuarioAPI(usuario);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
-            }catch(eer){
+            }catch(err){
                 console.error(err.message);
                 setAlerta({ status: "error", message: err.message })
             }
