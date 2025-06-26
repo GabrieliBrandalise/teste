@@ -1,9 +1,11 @@
+import { getToken } from '../seguranca/Autenticacao';
 export const getAgendamentosAPI = async () => {
     try {
         const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/agendamento`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                 "authorization": getToken()
             }
         });
         if (!response.ok) {
@@ -21,7 +23,8 @@ export const deleteAgendamentoAPI = async (id) => {
         const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/agendamento/${id}`, {
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                 "authorization": getToken()
             }
         });
         if (!response.ok) {
@@ -38,7 +41,10 @@ export const adicionarAgendamentoAPI = async (objeto) => {
     try {
         const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/agendamento`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json" ,
+                 "authorization": getToken()
+            },
             body: JSON.stringify(objeto),
         });
         if (!response.ok) {
@@ -58,7 +64,7 @@ export const atualizarAgendamentoAPI = async (id, objeto) => {
     try {
         const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/agendamento/${id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",  "authorization": getToken() },
             body: JSON.stringify(objeto),
         });
         if (!response.ok) {

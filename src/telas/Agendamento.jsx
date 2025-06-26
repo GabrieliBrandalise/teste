@@ -4,6 +4,8 @@ import {
     getAgendamentosAPI, deleteAgendamentoAPI, adicionarAgendamentoAPI, atualizarAgendamentoAPI
 } from '../services/AgendamentoServico'; 
 import { Button, Table, Modal, Form } from 'react-bootstrap';
+import WithAuth from '../seguranca/WithAuth';
+import { useNavigate } from "react-router-dom";
 
 function Agendamento() {
     const [alerta, setAlerta] = useState({ status: "", message: "" });
@@ -13,33 +15,50 @@ function Agendamento() {
         pedido_id: "", data_aplicacao: "", local_aplicacao: "", status: ""
     });
     const [isEditing, setIsEditing] = useState(false);
+    let navigate = useNavigate();
 
     const recuperarAgendamentos = async () => {
+       try{
         const agendamentos = await getAgendamentosAPI();
         console.log(agendamentos);
         setListaAgendamentos(agendamentos);
+       }catch(eer){
+         navigate("/login", { replace: true });
+       }    
     };
 
     const removerAgendamento = async id => {
+        try{
         if (window.confirm('Deseja remover este agendamento?')) {
             let retornoAPI = await deleteAgendamentoAPI(id);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
             recuperarAgendamentos();
         }
+    }catch(eer){
+         navigate("/login", { replace: true });
+    }
     };
 
     const criarAgendamento = async agendamento => {
+        try{
         const retornoAPI = await adicionarAgendamentoAPI(agendamento);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         recuperarAgendamentos();
         setShowModal(false);
+        } catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const atualizarAgendamento = async (agendamento) => {
+        try{
         const retornoAPI = await atualizarAgendamentoAPI(agendamento);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         recuperarAgendamentos();
         setShowModal(false);
+        } catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const openModal = (agendamento = {
@@ -161,4 +180,4 @@ function Agendamento() {
     );
 }
 
-export default Agendamento;
+export default WithAuth(Agendamento);

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import PedidoContext from './context/PedidoContext';
+import WithAuth from '../seguranca/WithAuth';
 import {
     getPedidosAPI, deletePedidoAPI, adicionarPedidoAPI, atualizarPedidoAPI
 } from '../services/PedidoServico';
 import { Button, Table, Modal, Form } from 'react-bootstrap'; 
+import { useNavigate } from "react-router-dom";
 
 function Pedido() {
     const [alerta, setAlerta] = useState({ status: "", message: "" });
@@ -13,33 +15,50 @@ function Pedido() {
         cliente_id: "", cliente_nome: "", cliente_telefone: "", data_pedido: "", status: ""
     }); 
     const [isEditing, setIsEditing] = useState(false); 
-
+    let navigate = useNavigate();
+    
     const recuperarPedidos = async () => {
+        try{
         const pedidos = await getPedidosAPI(); 
         console.log(pedidos);
         setListaPedidos(pedidos);
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const removerPedido = async id => {
+        try{
         if (window.confirm('Deseja remover este pedido?')) {
             let retornoAPI = await deletePedidoAPI(id);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
             recuperarPedidos();
         }
+    }catch(eer){
+         navigate("/login", { replace: true });
+    }
     };
 
     const criarPedido = async pedido => {
+        try{
         const retornoAPI = await adicionarPedidoAPI(pedido);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         recuperarPedidos();
         setShowModal(false); 
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const atualizarPedido = async (pedido) => {
+        try{
         const retornoAPI = await atualizarPedidoAPI(pedido);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         recuperarPedidos();
         setShowModal(false); 
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const openModal = (pedido = {
@@ -170,4 +189,4 @@ function Pedido() {
     );
 }
 
-export default Pedido;
+export default WithAuth(Pedido);

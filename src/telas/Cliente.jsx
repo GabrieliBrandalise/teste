@@ -5,6 +5,8 @@ import {
     deleteClienteAPI, adicionarClienteAPI, atualizarClienteAPI
 } from '../services/ClienteServico';
 import { Button, Table, Modal, Form } from 'react-bootstrap';
+import WithAuth from '../seguranca/WithAuth';
+import { useNavigate } from "react-router-dom";
 
 function Cliente() {
     const [alerta, setAlerta] = useState({ status: "", message: "" });
@@ -14,32 +16,49 @@ function Cliente() {
         nome: "", cpf_cnpj: "", telefone: "", endereco: ""
     });
     const [isEditing, setIsEditing] = useState(false);
+    let navigate = useNavigate();
 
     const recuperarClientes = async () => {
-        const clientes = await getClientesAPI();
-        setListaClientes(clientes);
+        try{
+            const clientes = await getClientesAPI();
+            setListaClientes(clientes);
+        }catch (eer){
+            navigate("/login", { replace: true });
+        }
     };
 
     const removerCliente = async id => {
+        try{
         if (window.confirm('Deseja remover este cliente?')) {
             const retornoAPI = await deleteClienteAPI(id);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
             recuperarClientes();
         }
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const adicionarCliente = async cliente => {
+        try{
         const retornoAPI = await adicionarClienteAPI(cliente);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         recuperarClientes();
         setShowModal(false);
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const atualizarCliente = async (cliente) => {
+        try{
         const retornoAPI = await atualizarClienteAPI(cliente);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         recuperarClientes();
         setShowModal(false);
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const openModal = (cliente = {
@@ -163,4 +182,4 @@ function Cliente() {
     );
 }
 
-export default Cliente;
+export default WithAuth(Cliente);

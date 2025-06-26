@@ -9,18 +9,35 @@ import Pedido from './telas/Pedido'
 import Produto from './telas/Produto'
 import Cliente from './telas/Cliente'
 import Agendamento from './telas/Agendamento'
-
-
+import Login from './telas/login/Login'
+import Logon from './telas/login/Logon'
+import MenuPublico from './componentes/MenuPublico'
+import MenuPrivado from "./componentes/MenuPrivado";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Menu />,
+    element: <MenuPublico />,
     children: [
       {
         index: true,
         element: <Home />,
       },
       {
+        path : "login",
+        element :  <Login/>
+      }
+    ]
+  }
+  , 
+  {
+    path: '/privado',
+    element: <MenuPrivado/>,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+       {
         path: "/pedido",
         element: <Pedido />,
       },
@@ -35,10 +52,14 @@ const router = createBrowserRouter([
       {
         path: "/produto",
         element: <Produto />,
-      }       
+      },
+      {
+        path : "logon",
+        element :  <Logon/>
+      }  
     ]
   }
-
+          
 ]);
 
 function App() {

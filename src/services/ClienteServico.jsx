@@ -1,8 +1,10 @@
+import { getToken } from '../seguranca/Autenticacao';
 export const getClientesAPI = async () => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/cliente`, {
         method: "GET",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+             "authorization": getToken()
         }
     });
     return await response.json();
@@ -12,7 +14,8 @@ export const getClientePorIdAPI = async (id) => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/cliente/${id}`, {
         method: "GET",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+             "authorization": getToken()
         }
     });
     return await response.json();
@@ -22,7 +25,8 @@ export const deleteClienteAPI = async (id) => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/cliente/${id}`, {
         method: "DELETE",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+             "authorization": getToken()
         }
     });
     return await response.json();
@@ -31,7 +35,7 @@ export const deleteClienteAPI = async (id) => {
 export const adicionarClienteAPI = async (objeto) => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/cliente`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",  "authorization": getToken() },
         body: JSON.stringify(objeto),
     });
     return await response.json();
@@ -40,7 +44,7 @@ export const adicionarClienteAPI = async (objeto) => {
 export const atualizarClienteAPI = async (objeto) => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/cliente`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",  "authorization": getToken() },
         body: JSON.stringify(objeto),
     });
     return await response.json();

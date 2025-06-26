@@ -1,9 +1,11 @@
+import { getToken } from '../seguranca/Autenticacao';
 export const getProdutosAPI = async () => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/produto`,
         {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                 "authorization": getToken()
             }
         })
     const data = await response.json()
@@ -15,7 +17,8 @@ export const getProdutoPorIdAPI = async id => {
         {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                 "authorization": getToken()
             }
         });
     const data = await response.json();
@@ -27,7 +30,8 @@ export const deleteProdutoAPI = async id => {
         {
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                 "authorization": getToken()
             }
         });
     const data = await response.json();
@@ -37,7 +41,9 @@ export const deleteProdutoAPI = async id => {
 export const adicionarProdutoAPI = async (objeto) => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/produto`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+             "authorization": getToken()
+         },
         body: JSON.stringify(objeto),
     });
     return await response.json();
@@ -46,7 +52,7 @@ export const adicionarProdutoAPI = async (objeto) => {
 export const atualizarProdutoAPI = async (objeto) => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/produto`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",  "authorization": getToken() },
         body: JSON.stringify(objeto),
     });
     return await response.json();

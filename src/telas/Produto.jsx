@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import ProdutoContext from './context/ProdutoContext';
+import WithAuth from '../seguranca/WithAuth';
 import {
     getProdutosAPI,
     deleteProdutoAPI, adicionarProdutoAPI, atualizarProdutoAPI
 } from '../services/ProdutoServico';
 import { Button, Table, Modal, Form } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 
 function Produto() {
     const [alerta, setAlerta] = useState({ status: "", message: "" });
@@ -15,31 +17,49 @@ function Produto() {
     });
     const [isEditing, setIsEditing] = useState(false);
 
+    let navigate = useNavigate();
+
     const recuperarProdutos = async () => {
+        try{
         const produtos = await getProdutosAPI();
         setListaProdutos(produtos);
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const removerProduto = async id => {
+        try{
         if (window.confirm('Deseja remover este produto?')) {
             let retornoAPI = await deleteProdutoAPI(id);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
             recuperarProdutos();
         }
+    } catch(eer){
+         navigate("/login", { replace: true });
+    }
     };
 
     const criarProduto = async produto => {
+        try{
         const retornoAPI = await adicionarProdutoAPI(produto);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         recuperarProdutos();
         setShowModal(false);
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const atualizarProduto = async (produto) => {
+        try{
         const retornoAPI = await atualizarProdutoAPI(produto);
         setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
         recuperarProdutos();
         setShowModal(false);
+        }catch(eer){
+             navigate("/login", { replace: true });
+        }
     };
 
     const openModal = (produto = {
@@ -162,4 +182,4 @@ function Produto() {
     );
 }
 
-export default Produto;
+export default WithAuth(Produto);
