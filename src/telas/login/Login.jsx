@@ -141,7 +141,7 @@ function Login() {
                         </form>
 
                          <div className="mt-4 d-flex flex-row gap-2 justify-content-center">
-                        <Button variant="success" onClick={() => navigate("/createaccount")}>
+                        <Button variant="success" onClick={() => navigate("createaccount")}>
                             Criar Usuário
                         </Button>
                         <Button variant="info" onClick={acaoLogin}>
