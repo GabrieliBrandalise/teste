@@ -6,6 +6,7 @@ import Alerta from '../../commons/Alerta';
 import CampoEntrada from '../../commons/CampoEntrada';
 import {atualizarUsuarioAPI} from '../../services/UsuarioServico'
 import Button from 'react-bootstrap/Button';
+import { useLocation } from 'react-router-dom';
 
 function Login() {
 
@@ -18,8 +19,9 @@ function Login() {
     nome: "", email: "", telefone: "", senha: "", tipo: ""
     });
     const [isEditing, setIsEditing] = useState(false);
-
+    const location = useLocation();
     const navigate = useNavigate();
+
     const atualizarUsuario = async (usuario) => {
             try{
             const retornoAPI = await atualizarUsuarioAPI(usuario);
@@ -71,6 +73,7 @@ function Login() {
                     if (json.auth === true) {
                         setAutenticado(true);
                         gravaAutenticacao(json);
+                        localStorage.setItem("usuarioLogado", JSON.stringify(json.usuario)); 
                     }
                 });
         } catch (err) {
@@ -92,6 +95,18 @@ function Login() {
         }
     }, []);
 
+    useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const editar = params.get("editar");
+    if (editar === "true") {
+        const usuarioStorage = localStorage.getItem("usuarioLogado");
+        if (usuarioStorage) {
+        const usuario = JSON.parse(usuarioStorage);
+        openModal(usuario);
+        }
+    }
+    }, [location]);
+    
     if (autenticado === true) {
         return <Navigate to="/privado" />
     }
@@ -131,9 +146,6 @@ function Login() {
                         </Button>
                         <Button variant="info" onClick={acaoLogin}>
                             Login
-                        </Button>
-                        <Button variant="secondary" onClick={() => openModal(usuarioLogado)}>
-                            Editar
                         </Button>
                         </div>
                     </Carregando>

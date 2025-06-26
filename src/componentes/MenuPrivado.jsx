@@ -4,6 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { NavLink, Outlet } from 'react-router-dom';
 import { getUsuario, logout } from '../seguranca/Autenticacao';
+import { atualizarUsuario } from '../telas/login/Login';
 
 function MenuPrivado() {
 
@@ -30,13 +31,14 @@ function MenuPrivado() {
                     </Navbar.Collapse>
                      <Navbar.Collapse className="justify-content-end">                        
                         <NavDropdown title={usuario ? "Usuário: " + usuario.nome : "Usuário"} id="basic-nav-dropdown">
-                            {usuario ?
-                                <NavLink className="dropdown-item" exact="true"
-                                    to="/" onClick={() => logout()}>Logout</NavLink>
-                                :
-                                <NavLink className="dropdown-item" exact="true"
-                                    to="/login">login</NavLink>
-                            }
+                            {usuario ? (
+                                    <>
+                                    <NavDropdown.Item as={NavLink} to="/login?editar=true"> Editar Dados </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={logout}> Logout </NavDropdown.Item>
+                                    </>
+                                ) : (
+                                    <NavDropdown.Item as={NavLink} to="/login">Login </NavDropdown.Item>
+                                )}
                         </NavDropdown>
                     </Navbar.Collapse>
                 </Container>
