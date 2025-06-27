@@ -25,7 +25,7 @@ function CreateAccount() {
       setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
 
       if (retornoAPI.status === "success") {
-        setTimeout(() => navigate("/"), 2000); // Redireciona para login após sucesso
+        setTimeout(() => navigate("/privado"), 2000);
       }
 
     } catch (err) {
