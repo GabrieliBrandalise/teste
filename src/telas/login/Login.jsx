@@ -23,6 +23,7 @@ function Login() {
     const navigate = useNavigate();
 
     const atualizarUsuario = async (usuario) => {
+        console.log("Chegou aqui atualizarUsuario");
             try{
                 setCarregando(true);
                 const retornoAPI = await atualizarUsuarioAPI(usuario);
@@ -48,7 +49,9 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Entrou no handle");
         if (isEditing) {
+            console.log("Entrou no atualizar handle");
             await atualizarUsuario(usuarioLogado);
         } else {
             await acaoLogin();

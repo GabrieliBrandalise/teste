@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-
+import { Navigate } from 'react-router-dom';
 const NOMEAPP = 'cab-site';
 
 export const getToken = () => {
@@ -52,4 +52,6 @@ export const logout = () => {
     localStorage.setItem(NOMEAPP+'/autenticacao',JSON.stringify({
         "auth" : false , "token" : ''
     }));
+
+     return <Navigate to="/login" />
 }
