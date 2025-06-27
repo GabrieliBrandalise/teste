@@ -8,7 +8,7 @@ export const adicionarUsuarioAPI = async (objeto) => {
             body: JSON.stringify(objeto),
         });
         return await response.json();
-    }catch(eer){
+    }catch(err){
         throw new Error(`Erro ao cadastrar usuário: ${err.message}`);
     }
 };
