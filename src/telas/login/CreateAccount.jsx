@@ -92,8 +92,8 @@ function CreateAccount() {
                     required
                 >
                     <option value="">Selecione o tipo</option>
-                    <option value="CLIENTE">Cliente</option>
-                    <option value="ADMIN">Administrador</option>
+                    <option value="C">Cliente</option>
+                    <option value="A">Administrador</option>
                 </select>
               </div>
 
