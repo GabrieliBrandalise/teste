@@ -16,6 +16,9 @@ function Cliente() {
         nome: "", cpf_cnpj: "", telefone: "", endereco: ""
     });
     const [isEditing, setIsEditing] = useState(false);
+
+    const [usuarioLogado, setUsuarioLogado] = useState(null);
+
     let navigate = useNavigate();
 
     const recuperarClientes = async () => {
@@ -80,6 +83,10 @@ function Cliente() {
     };
 
     useEffect(() => {
+        const storedUser = localStorage.getItem("usuarioLogado");
+        if (storedUser) {
+            setUsuarioLogado(JSON.parse(storedUser));
+        }
         recuperarClientes();
     }, []);
 
@@ -122,7 +129,9 @@ function Cliente() {
                                 <td>{cliente.endereco}</td>
                                 <td>
                                     <Button variant="warning" onClick={() => openModal(cliente)}>Editar</Button>
-                                    <Button variant="danger" className="ml-2" onClick={() => removerCliente(cliente.id)}>Remover</Button>
+                                     {usuarioLogado && usuarioLogado.tipo === 'A' && (
+                                        <Button variant="danger" className="ms-2" onClick={() => removerCliente(cliente.id)}> Remover </Button>)
+                                     }
                                 </td>
                             </tr>
                         ))}

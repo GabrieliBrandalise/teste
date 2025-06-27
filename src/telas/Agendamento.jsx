@@ -15,6 +15,8 @@ function Agendamento() {
         pedido_id: "", data_aplicacao: "", local_aplicacao: "", status: ""
     });
     const [isEditing, setIsEditing] = useState(false);
+    const [usuarioLogado, setUsuarioLogado] = useState(null);
+    
     let navigate = useNavigate();
 
     const recuperarAgendamentos = async () => {
@@ -80,6 +82,10 @@ function Agendamento() {
     };
 
     useEffect(() => {
+        const storedUser = localStorage.getItem("usuarioLogado");
+        if (storedUser) {
+            setUsuarioLogado(JSON.parse(storedUser));
+        }
         recuperarAgendamentos();
     }, []);
 
@@ -121,7 +127,9 @@ function Agendamento() {
                                 <td>{agendamento.status}</td>
                                 <td>
                                     <Button variant="warning" onClick={() => openModal(agendamento)}>Editar</Button>
+                                    {usuarioLogado && usuarioLogado.tipo === 'A' && (
                                     <Button variant="danger" className="ml-2" onClick={() => removerAgendamento(agendamento.id)}>Remover</Button>
+                                    )}
                                 </td>
                             </tr>
                         ))}

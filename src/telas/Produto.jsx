@@ -16,7 +16,8 @@ function Produto() {
         nome: "", tipo: "", preco: "", estoque: ""
     });
     const [isEditing, setIsEditing] = useState(false);
-
+    const [usuarioLogado, setUsuarioLogado] = useState(null);
+    
     let navigate = useNavigate();
 
     const recuperarProdutos = async () => {
@@ -81,6 +82,10 @@ function Produto() {
     };
 
     useEffect(() => {
+        const storedUser = localStorage.getItem("usuarioLogado");
+        if (storedUser) {
+            setUsuarioLogado(JSON.parse(storedUser));
+        }
         recuperarProdutos();
     }, []);
 
@@ -123,7 +128,10 @@ function Produto() {
                                 <td>{produto.estoque}</td>
                                 <td>
                                     <Button variant="warning" onClick={() => openModal(produto)}>Editar</Button>
-                                    <Button variant="danger" className="ml-2" onClick={() => removerProduto(produto.id)}>Remover</Button>
+                                    {usuarioLogado && usuarioLogado.tipo === 'A' && (
+                                       <Button variant="danger" className="ml-2" onClick={() => removerProduto(produto.id)}>Remover</Button>
+                                    )}
+                                    
                                 </td>
                             </tr>
                         ))}

@@ -15,6 +15,8 @@ function Pedido() {
         cliente_id: "", cliente_nome: "", cliente_telefone: "", data_pedido: "", status: ""
     }); 
     const [isEditing, setIsEditing] = useState(false); 
+    const [usuarioLogado, setUsuarioLogado] = useState(null);
+
     let navigate = useNavigate();
     
     const recuperarPedidos = async () => {
@@ -80,6 +82,10 @@ function Pedido() {
     };
 
     useEffect(() => {
+        const storedUser = localStorage.getItem("usuarioLogado");
+        if (storedUser) {
+            setUsuarioLogado(JSON.parse(storedUser));
+        }
         recuperarPedidos();
     }, []);
 
@@ -121,8 +127,11 @@ function Pedido() {
                                 <td>{pedido.status}</td>
                                 <td>
                                     <Button variant="warning" onClick={() => openModal(pedido)}>Editar</Button>
-                                    <Button variant="danger" className="ml-2" onClick={() => removerPedido(pedido.id)}>Remover</Button>
-                                </td>
+                                    {usuarioLogado && usuarioLogado.tipo === 'A' && (
+                                        <Button variant="danger" className="ml-2" onClick={() => removerPedido(pedido.id)}>Remover</Button>
+                                    )}
+                                    
+                                    </td>
                             </tr>
                         ))}
                     </tbody>
