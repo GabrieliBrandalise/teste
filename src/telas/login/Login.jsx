@@ -143,7 +143,7 @@ function Login() {
         }
     }, [location]);
     
-    if (autenticado === true && !isEditing) {
+    if (autenticado === true && location.search.indexOf("editar=true") === -1) {
         return <Navigate to="/privado" />
     }
 
