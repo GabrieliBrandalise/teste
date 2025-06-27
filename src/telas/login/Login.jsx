@@ -4,7 +4,7 @@ import { gravaAutenticacao, getToken } from '../../seguranca/Autenticacao';
 import Carregando from '../../commons/Carregando';
 import Alerta from '../../commons/Alerta';
 import CampoEntrada from '../../commons/CampoEntrada';
-import {atualizarUsuarioAPI} from '../../services/UsuarioServico'
+import {atualizarUsuarioAPI, getUsuarioAPI} from '../../services/UsuarioServico'
 import Button from 'react-bootstrap/Button';
 import { useLocation } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ function Login() {
     const [autenticado, setAutenticado] = useState(false);
     const [carregando, setCarregando] = useState(false);
      const [usuarioLogado, setUsuarioLogado] = useState({
-    nome: "", email: "", telefone: "", senha: "", tipo: ""
+        id: null, nome: "", email: "", telefone: "", senha: "", tipo: ""
     });
     const [isEditing, setIsEditing] = useState(false);
     const location = useLocation();
@@ -24,32 +24,36 @@ function Login() {
 
     const atualizarUsuario = async (usuario) => {
             try{
-            const retornoAPI = await atualizarUsuarioAPI(usuario);
-            setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
-            }catch(err){
-                console.error(err.message);
-                setAlerta({ status: "error", message: err.message })
+                setCarregando(true);
+                const retornoAPI = await atualizarUsuarioAPI(usuario);
+                setAlerta({ status: retornoAPI.status, message: retornoAPI.message });
+            if (retornoAPI.status === "success") {
+                localStorage.setItem("usuarioLogado", JSON.stringify(retornoAPI.objeto));
+                setIsEditing(false);
+                setAlerta({ status: "success", message: "Usuário atualizado com sucesso!" });
+                navigate("/privado"); 
             }
+        } catch (err) {
+            console.error(err.message);
+            setAlerta({ status: "error", message: err.message })
+        } finally {
+            setCarregando(false);
+        }
     };
 
-     const openModal = (usuario = {
-    nome: "", email: "", telefone: "", senha: "", tipo: ""
-  }) => {
-    setUsuarioLogado(usuario);
-    setIsEditing(true);
-    setEmail(usuario.email || "");
-    setSenha(usuario.senha || "");
-  };
+    const openModal = (usuarioParaEditar) => {
+        setUsuarioLogado(usuarioParaEditar);
+        setIsEditing(true);
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (isEditing) {
-      await atualizarUsuario(usuarioLogado);
-    } else {
-      await acaoLogin();
-    }
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (isEditing) {
+            await atualizarUsuario(usuarioLogado);
+        } else {
+            await acaoLogin();
+        }
+    };
 
     const acaoLogin = async e => {
 
@@ -95,19 +99,51 @@ function Login() {
         }
     }, []);
 
-    useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const editar = params.get("editar");
-    if (editar === "true") {
-        const usuarioStorage = localStorage.getItem("usuarioLogado");
-        if (usuarioStorage) {
-        const usuario = JSON.parse(usuarioStorage);
-        openModal(usuario);
+     useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const editar = params.get("editar");
+        
+        if (editar === "true") {
+            const usuarioStorage = localStorage.getItem("usuarioLogado");
+            if (usuarioStorage) {
+                const usuarioLocal = JSON.parse(usuarioStorage);
+
+                if (!usuarioLocal.id) { 
+                    setAlerta({ status: "error", message: "ID do usuário não encontrado para edição." });
+                    setIsEditing(false);
+                    return;
+                }
+
+                const fetchUsuarioForEdit = async () => {
+                    try {
+                        setCarregando(true);
+                        const retornoAPI = await getUsuarioAPI(usuarioLocal.id); 
+
+                        if (retornoAPI.status === "success" && retornoAPI.objeto) {
+                            openModal(retornoAPI.objeto);
+                        } else {
+                            setAlerta({ status: "error", message: retornoAPI.message || "Erro ao carregar dados do usuário para edição." });
+                            setIsEditing(false);
+                        }
+                    } catch (err) {
+                        setAlerta({ status: "error", message: "Erro ao carregar dados do usuário para edição: " + err.message });
+                        console.error("Erro ao buscar usuário para edição:", err);
+                        setIsEditing(false);
+                    } finally {
+                        setCarregando(false);
+                    }
+                };
+                fetchUsuarioForEdit();
+            } else {
+                setAlerta({ status: "error", message: "Nenhum usuário logado encontrado para edição." });
+                setIsEditing(false);
+            }
+        } else {
+            setIsEditing(false);
         }
-    }
     }, [location]);
     
-    if (autenticado === true) {
+    if (autenticado === true && !isEditing) {
         return <Navigate to="/privado" />
     }
 
@@ -118,35 +154,104 @@ function Login() {
                     <Carregando carregando={carregando}>
                         <Alerta alerta={alerta} />
                         <form onSubmit={handleSubmit}>
-                            <h1 className="h3 mb-3 fw-normal">Login de usuário</h1>
+                            <h1 className="h3 mb-3 fw-normal">{isEditing ? "Editar Perfil" : "Login de Usuário"}</h1>
+                           
+                           {!isEditing && (
+                            <>
                             <CampoEntrada value={email}
                                 id="txtEmail" name="email" label="Nome"
-                                tipo="email" onchange={e => {
-                                    setUsuarioLogado({ ...usuarioLogado, email: e.target.value });
-                                    setEmail(e.target.value);
-                                 }
-                                }
+                                tipo="email" onchange={e => {setEmail(e.target.value);}}
                                 msgvalido="Email OK" msginvalido="Informe o email"
                                 requerido={true} readonly={false}
                                 maxCaracteres={40} />
                             <CampoEntrada value={senha}
                                 id="txtSenha" name="senha" label="Senha"
-                                tipo="password" onchange={(e) => {
-                                    setUsuarioLogado({ ...usuarioLogado, senha: e.target.value });
-                                    setSenha(e.target.value);
-                                    }}
+                                tipo="password" onchange={(e) => {setSenha(e.target.value);}}
                                 msgvalido="Senha OK" msginvalido="Informe a senha"
                                 requerido={true} readonly={false}
                                 maxCaracteres={40} />
+                                </>
+                           )}
+
+                           {isEditing && (
+                                <>
+                                    <CampoEntrada value={usuarioLogado.nome}
+                                        id="txtNome" name="nome" label="Nome"
+                                        tipo="text" onchange={e => {
+                                            setUsuarioLogado({ ...usuarioLogado, nome: e.target.value });
+                                        }}
+                                        msgvalido="Nome OK" msginvalido="Informe o nome"
+                                        requerido={true} readonly={false}
+                                        maxCaracteres={100} />
+                                    <CampoEntrada value={usuarioLogado.email}
+                                        id="txtEmailEdicao" name="email" label="Email"
+                                        tipo="email" onchange={e => {
+                                            setUsuarioLogado({ ...usuarioLogado, email: e.target.value }); 
+                                        }}
+                                        msgvalido="Email OK" msginvalido="Informe o email"
+                                        requerido={true} readonly={false} 
+                                        maxCaracteres={40} />
+                                    <CampoEntrada value={usuarioLogado.telefone}
+                                        id="txtTelefone" name="telefone" label="Telefone"
+                                        tipo="text" onchange={e => {
+                                            setUsuarioLogado({ ...usuarioLogado, telefone: e.target.value });
+                                        }}
+                                        msgvalido="Telefone OK" msginvalido="Informe o telefone"
+                                        requerido={true} readonly={false}
+                                        maxCaracteres={20} />
+                                    <CampoEntrada value={usuarioLogado.senha}
+                                        id="txtSenhaEdicao" name="senha" label="Nova Senha (deixe em branco para não alterar)"
+                                        tipo="password" onchange={e => {
+                                            setUsuarioLogado({ ...usuarioLogado, senha: e.target.value });
+                                        }}
+                                        msgvalido="Senha OK" msginvalido=""
+                                        requerido={false} readonly={false}
+                                        maxCaracteres={40} />
+                                     <div className="form-group mb-3">
+                                        <label htmlFor="tipo">Tipo de Usuário</label>
+                                        <select
+                                            id="tipo"
+                                            name="tipo"
+                                            className="form-control"
+                                            value={usuarioLogado.tipo}
+                                            onChange={(e) => setUsuarioLogado({ ...usuarioLogado, tipo: e.target.value })}
+                                            required
+                                        >
+                                            <option value="">Selecione o tipo</option>
+                                            <option value="C">Cliente</option> 
+                                            <option value="A">Administrador</option> 
+                                        </select>
+                                    </div>
+                                </>
+                            )}
                         </form>
 
                          <div className="mt-4 d-flex flex-row gap-2 justify-content-center">
-                        <Button variant="success" onClick={() => navigate("createaccount")}>
-                            Criar Usuário
-                        </Button>
-                        <Button variant="info" onClick={acaoLogin}>
-                            Login
-                        </Button>
+                           {!isEditing && (
+                                <>
+                                    <Button variant="success" onClick={() => navigate("/createaccount")}>
+                                        Criar Usuário
+                                    </Button>
+                                    <Button variant="info" onClick={acaoLogin}>
+                                        Login
+                                    </Button>
+                                </>
+                           )}
+                           {isEditing && (
+                                 <>
+                                    <Button variant="primary" type="submit">
+                                        Atualizar
+                                     </Button>
+                                    <Button variant="secondary" onClick={() => {
+                                        setIsEditing(false);
+                                        setUsuarioLogado({ id: null, nome: "", email: "", telefone: "", senha: "", tipo: "" });
+                                        setAlerta({ status: "", message: "" });
+                                        navigate("/privado");
+                                        }}>
+                                        Cancelar
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </Carregando>
                 </div>

@@ -93,7 +93,6 @@ function CreateAccount() {
                 >
                     <option value="">Selecione o tipo</option>
                     <option value="CLIENTE">Cliente</option>
-                    <option value="MAIOR">Maior</option>
                     <option value="ADMIN">Administrador</option>
                 </select>
               </div>
